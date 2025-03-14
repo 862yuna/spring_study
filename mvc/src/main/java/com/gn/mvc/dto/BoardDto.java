@@ -1,6 +1,8 @@
 package com.gn.mvc.dto;
 
 
+import java.time.LocalDateTime;
+
 import com.gn.mvc.entity.Board;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +22,8 @@ public class BoardDto {
 	private Long board_no;
 	private String board_title;
 	private String board_content;
+	private LocalDateTime reg_date;
+	private LocalDateTime mod_date;
 	
 	// 1. BoardDto -> Board(Entity)
 	public Board toEntity() {
@@ -35,6 +39,8 @@ public class BoardDto {
 		return BoardDto.builder()
 				.board_title(board.getBoardTitle())
 				.board_content(board.getBoardContent())
+				.reg_date(board.getRegDate())
+				.mod_date(board.getModDate())
 				.build();
 	}
 }
