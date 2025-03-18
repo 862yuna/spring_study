@@ -1,16 +1,22 @@
 package com.gn.mvc.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.gn.mvc.dto.AttachDto;
 import com.gn.mvc.dto.BoardDto;
 import com.gn.mvc.dto.PageDto;
 import com.gn.mvc.dto.SearchDto;
+import com.gn.mvc.entity.Attach;
 import com.gn.mvc.entity.Board;
+import com.gn.mvc.repository.AttachRepository;
 import com.gn.mvc.repository.BoardRepository;
 import com.gn.mvc.specification.BoardSpecification;
 
@@ -23,6 +29,7 @@ public class BoardService {
 //	@Autowired
 //	BoardRepository repository; // repository 불러옴
 	private final BoardRepository repository;
+	private final AttachRepository attachRepository;
 	
 	
 	public Board selectBoardOne(Long id) {
@@ -75,20 +82,46 @@ public class BoardService {
 		
 		
 	}
-	
-	public BoardDto createBoard(BoardDto dto) {
+	// 자료 데이터 변화가 2개 이상이면 트랜잭션 사용 @Transactional
+	@Transactional(rollbackFor = Exception.class) // 모든 예외상황에 롤백하기 위한 별도의 설정
+	public int createBoard(BoardDto dto,List<AttachDto> attachList) {
+		int result = 0;
+		try {
+			// 1. Board Entity를 insert
+			Board entity = dto.toEntity(); // dto를 entity로 바꿔줌
+			Board saved = repository.save(entity); // entity를 매개변수로 써서 repository에 save
+			// 2. insert 결과로 반환받은 PK
+			Long boardNo = saved.getBoardNo(); 
+			// 3. attachList에 데이터가 있는 경우
+			if(attachList.size() != 0) {
+				for(AttachDto attachDto : attachList) {
+					attachDto.setBoard_no(boardNo);
+					Attach attach = attachDto.toEntity();
+					// 4. Attach 엔티티 insert
+					attachRepository.save(attach);
+					
+				}
+			}
+			
+			result = 1;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 		// 1. 매개변수 dto -> entity
 //		Board param = Board.builder()
 //					.boardTitle(dto.getBoard_title())
 //					.boardContent(dto.getBoard_content())
 //					.build();
-		Board param = dto.toEntity(); // dto를 Entity로 바꿔줌
+//		Board param = dto.toEntity(); // dto를 Entity로 바꿔줌
+//		
+//		// 2. Repository 의 save() 메소드 호출
+//		Board result = repository.save(param); // insert쿼리 실행, entity가 반환
+//		
+//		// 3. 결과 entity -> dto
+//		return new BoardDto().toDto(result);
 		
-		// 2. Repository 의 save() 메소드 호출
-		Board result = repository.save(param); // insert쿼리 실행, entity가 반환
-		
-		// 3. 결과 entity -> dto
-		return new BoardDto().toDto(result);
 		
 		
 		
