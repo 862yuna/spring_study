@@ -82,12 +82,12 @@ public class BoardController {
 			AttachDto attachDto = attachService.uploadFile(mf);
 			if(attachDto != null) attachDtoList.add(attachDto); 
 		}
-		if(dto.getFiles().size() == attachDtoList.size()) {
+//		if(dto.getFiles().size() == attachDtoList.size()) { // 스프링이 처리하도록 하여 조건 X
 			int result = service.createBoard(dto,attachDtoList);
 			if(result > 0) {
 				resultMap.put("res_cod", "200");
 				resultMap.put("res_msg", "게시글이 등록되었습니다.");
-			}
+//			}
 		}
 //		System.out.println(dto);
 		// Service가 가지고 있는 createBoard 메소드 호출
@@ -150,19 +150,47 @@ public class BoardController {
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "500");
 		resultMap.put("res_msg", "게시글 수정중 오류가 발생하였습니다.");
+		List<AttachDto> attachDtoList = new ArrayList<AttachDto>();
 		
-		logger.info("삭제 파일 정보 : "+param.getDelete_files());
-		
-		logger.debug(param.toString()); //출력 (전달 확인)
-//		System.out.println(param);
-		// 2. BoardService -> BoardRepository 게시글 수정(save)
-//		Board saved = service.updateBoard(param);
-////		BoardDto result = service.updateBoard(param);
-//		// 3. 수정 결과 Entity가 null이 아니면 성공 그외는 실패
-//		if(saved != null) {
+		for(MultipartFile mf : param.getFiles()) {
+			AttachDto attachDto = attachService.uploadFile(mf);
+//			logger.info(mf.getOriginalFilename());
+			if(attachDto != null) {
+				attachDtoList.add(attachDto);
+			}
+		}
+		Board saved = service.updateBoard(param,attachDtoList);
+		if(saved != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "게시글이 정상적으로 수정되었습니다.");
+		}
+//		if(attachDtoList.size() == param.getFiles().size()) {
+//			// 2. BoardService -> BoardRepository 게시글 수정(save)
+//
+////		// 3. 수정 결과 Entity가 null이 아니면 성공 그외는 실패
+//			}
+//			
+//		}
+//		// 삭제하고자 하는 파일이 존재하는 경우
+//		if(param.getDelete_files() != null && !param.getDelete_files().isEmpty()) {
+//
+//			for(Long attach_no : param.getDelete_files()) {
+//				// (1) 메모리에서 파일 자체 삭제
+//				if(attachService.deleteFileData(attach_no) > 0) {
+//					// (2) DB에서 메타 데이터 삭제 -> 사용자 눈에 보이는 부분 (더 중요)
+//					attachService.deleteMetaData(attach_no);
+//				}
+//			}
 //			resultMap.put("res_code", "200");
 //			resultMap.put("res_msg", "게시글이 정상적으로 수정되었습니다.");
 //		}
+//		
+		
+//		logger.info("삭제 파일 정보 : "+param.getDelete_files());
+		
+		logger.debug(param.toString()); //출력 (전달 확인)
+//		System.out.println(param);
+//		Board saved = service.updateBoard(param); // 파일 정보를 삭제하는 로직
 		
 		return resultMap;
 	}
