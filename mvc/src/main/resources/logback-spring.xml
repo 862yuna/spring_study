@@ -47,7 +47,7 @@
 	</appender>
 	
 	<!-- root레벨 설정 / 기록을 남기지 않고 싶으면 OFF로 바꿔주기-->
-    <root level="INFO">
+    <root level="WARN">
        <appender-ref ref="CONSOLE"/>
        <appender-ref ref="FILE"/>
    </root>

@@ -28,5 +28,37 @@ layout:decorate="~{/include/layout}"> <!-- 이걸로 꾸민다. -->
 				</div>
 			</div>
 		</section>
+		<h1>WebSocket 테스트</h1>
+		<input type="text" id="msg">
+		<input type="button" value="전송" onclick="sendMsg();">
+		<div id="output">
+		
+		</div>
+		<script>
+			let socket = new WebSocket("ws://localhost:8080/ws/basic"); // new WebSocket선언 되어있는 페이지에 진입
+			
+			socket.onopen = function(){ //open 메소드
+				// 클라이언트 -> 서버 연결합시다!
+				// 서버의 afterConnectionEstablished 메소드 갔다 왔을 때 onopen이 동작
+				console.log("클라이언트 : 연결");
+			}
+			
+			socket.onmessage = function(event){
+				// 클라이언트 -> 서버에 메세지를 send
+				// 메시지를 서버가 handleTextMessage에서 처리
+				// 서버의 sendMessage 메소드 동작
+				//console.log(event.data); // event.data 는 session.sendMessage(new TextMessage(""));
+				document.getElementById('output').innerHTML += '<p>'+event.data+'</p>';
+				
+			}
+			
+			const sendMsg = function(){
+				let msg = document.getElementById('msg').value;
+				socket.send(msg); // send 메소드 사용
+				document.getElementById('msg').value = "";
+			}
+			
+			
+		</script>
 	</th:block>
 </html>

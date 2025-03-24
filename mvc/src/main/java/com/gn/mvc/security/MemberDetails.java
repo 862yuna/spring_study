@@ -26,7 +26,8 @@ public class MemberDetails implements UserDetails{
 	// 사용자 권한 설정 getAuthorities는 복수형. 따라서 Collection이라는 목록 형태
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("user"));
+//		return List.of(new SimpleGrantedAuthority("user"));
+		return List.of(new SimpleGrantedAuthority(member.getMemberRole()));
 	}
 	
 	// 사용자 비밀번호 반환

@@ -24,6 +24,7 @@ public class MemberDto {
 	private String member_name;
 	private LocalDateTime reg_date;
 	private LocalDateTime mod_date;
+	private String member_role;
 	
 	public Member toEntity() { // 여기에 날짜 정보 넣어주면 NULL로 들어감 그래서 안넣어줌
 		return Member.builder()
@@ -31,6 +32,7 @@ public class MemberDto {
 					.memberId(member_id)
 					.memberPw(member_pw)
 					.memberName(member_name)
+					.memberRole(member_role)
 					.build();
 	}
 	
