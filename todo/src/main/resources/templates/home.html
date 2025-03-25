@@ -27,7 +27,9 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 					<tbody>
 						<tr th:if="${!#lists.isEmpty(todoList)}"
 							th:each="todo, todoStatus : ${todoList}">
-							<td><input type="checkbox" name="complete" id="complete"></td>
+							<td><input type="checkbox" name="complete" id="complete"
+								th:checked="${todo.flag == 'Y'}"
+								th:onchange="|javascript:todoUpdate('${todo.no}')|"></td>
 							<td th:text="${(pageDto.nowPage-1)*(pageDto.numPerPage)+todoStatus.count}">번호</td>
 							<td th:text="${todo.content}">내용</td>
 							<td>
@@ -105,9 +107,13 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 					.then(response => response.json())
 					.then(data =>{
 						alert(data.res_msg);
+						if(data.res_code == 200){
+							location.href="/";
+						}
 					})
 					
 					document.getElementById('content').value="";
+					
 				}
 				
 			})
@@ -128,6 +134,18 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 						alert(data.res_msg);
 					})
 				}
+			}
+			
+			// 수정
+			const todoUpdate = function(no){
+				
+				fetch('/todo/'+no+"/update",{
+					method:'post',
+				})
+				.then(response => response.json())
+				.then(data => {
+					alert(data.res_msg);
+				})
 			}
 		
 		</script>

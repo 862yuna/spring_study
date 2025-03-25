@@ -51,28 +51,25 @@ public class HomeController {
 	
 	@GetMapping({"","/"})
 	public String selectTodoAll(Model model, SearchDto searchDto, PageDto pageDto) {
-		if(pageDto == null) {
-			pageDto = new PageDto();
-		}
 		
 		if(pageDto.getNowPage() == 0) {
 			pageDto.setNowPage(1);
 		}
 		
+		if(searchDto.getSearch_text() == null) {
+			searchDto.setSearch_text("");
+		}
+		
 		Page<Todo> resultList = service.selectTodoAll(searchDto,pageDto);
 		
-		int totalPages = resultList.getTotalPages();
-		
-//		if(resultList.isEmpty()) {
-//			totalPages = 1;
-//		}
-		pageDto.setTotalPage(totalPages);
-		
-			
-		
-		
-		
 		model.addAttribute("todoList",resultList);
+		
+		pageDto.setTotalPage(resultList.getTotalPages());
+		
+		if(resultList.isEmpty()) {
+			pageDto.setTotalPage(1);
+		}
+			
 		model.addAttribute("searchDto",searchDto);
 		model.addAttribute("pageDto",pageDto);
 		
@@ -91,6 +88,23 @@ public class HomeController {
 		if(result > 0) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "정상적으로 삭제되었습니다.");
+		}
+		
+		return resultMap;
+	}
+	
+	// 수정
+	@PostMapping("/todo/{id}/update")
+	@ResponseBody
+	public Map<String,String> updateTodoApi(@PathVariable("id") Long id){
+		Map<String,String> resultMap = new HashMap<String,String>();
+		resultMap.put("res_code", "500");
+		resultMap.put("res_msg", "완료 수정중 오류가 발생하였습니다.");
+		
+		Todo saved = service.updateTodo(id);
+		if(saved != null) {
+			resultMap.put("res_code", "200");
+			resultMap.put("res_msg", "수정되었습니다.");
 		}
 		
 		return resultMap;
