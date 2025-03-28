@@ -1,11 +1,143 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>할 일 목록</title>
+<style>
+h1 {
+		text-align: center;
+		margin-top: 30px;
+		color: #2c3e50;
+	}
+
+	.search, .plus_todo_form, .center {
+		width: 60%;
+		margin: 20px auto;
+		padding: 20px;
+		background: #ffffff;
+		border-radius: 12px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	.todo_list {
+		width: 80%;
+		margin: auto;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		background-color: #ffffffd0;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	table th, table td {
+		padding: 12px;
+		text-align: center;
+		border: 1px solid #e0e0e0;
+	}
+
+	table thead {
+		background-color: #cdd9ed;
+		color: #2c3e50;
+	}
+
+	tbody tr:nth-child(even) {
+		background-color: #f0f4fa; /* 짝수 줄 배경 */
+	}
+
+	input[type="text"] {
+		width: 70%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+		margin-right: 10px;
+		background-color: #f8faff; /* 텍스트 입력창 파스텔톤 */
+		color: #2c3e50;
+	}
+
+	input[type="submit"], button {
+		padding: 10px 20px;
+		background: #a8c0e0; /* 파스텔 블루 버튼 */
+		border: none;
+		border-radius: 8px;
+		color: white;
+		cursor: pointer;
+		transition: background 0.3s ease;
+	}
+
+	input[type="submit"]:hover, button:hover {
+		background: #8aaad0;
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: center;
+		gap: 8px;
+		margin-top: 20px;
+	}
+
+	.pagination a {
+		padding: 8px 14px;
+		text-decoration: none;
+		border: 1px solid #ccc;
+		border-radius: 6px;
+		color: #333;
+		background: white;
+		transition: background 0.3s ease;
+	}
+
+	.pagination a:hover {
+		background: #cdd9ed;
+		color: white;
+	}
+	
+</style>
+</head>	
+<body>	
+	
 	<th:block>
-		<h1>할 일 목록</h1>
+		<h1>파일 목록</h1>
+		<form name="create_file_form">
+			<input type="file" name="files" multiple>
+			<input type="submit" value="업로드">
+		</form>
+		<script>
+			const fileForm = document.create_file_form;
+			fileForm.addEventListener('submit', (e)=>{
+				e.preventDefault();
+				
+				let vali_check = false;
+				let vali_text = "";
+				
+				if(!fileForm.files.value){
+					vali_text += "파일을 선택해주세요";
+					fileForm.files.focus();
+					alert(vali_text);
+				}else{
+					const filePayload = new FormData(fileForm);
+					fetch("/attach/create",{
+						method:'post',
+						body:filePayload
+					})
+					.then(response => response.json())
+					.then(data => {
+						alert(data.res_msg);
+						if(data.res_code == 200){
+							location.href="/";
+						}
+					})
+				}
+				
+			})
+		</script>
+		
+		<h1>To Do List✨</h1>
 		
 		<div class="search">
-			<form>
+			<form action="/" method="get">
 				<label for="search_text">내용 : </label>
 				<input type="text" id="search_text" name="search_text">
 				<input type="submit" value="검색">
@@ -27,14 +159,13 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 					<tbody>
 						<tr th:if="${!#lists.isEmpty(todoList)}"
 							th:each="todo, todoStatus : ${todoList}">
-							<td><input type="checkbox" name="complete" id="complete"
-								th:checked="${todo.flag == 'Y'}"
+							<td><input type="checkbox" name="complete"
+								th:checked="${todo.flag == 'Y'}" th:value="${todo.flag}"
 								th:onchange="|javascript:todoUpdate('${todo.no}')|"></td>
 							<td th:text="${(pageDto.nowPage-1)*(pageDto.numPerPage)+todoStatus.count}">번호</td>
 							<td th:text="${todo.content}">내용</td>
 							<td>
-								<button id="delete_btn"
-									th:onclick="|javascript:todoDelete('${todo.no}')|">
+								<button th:onclick="|javascript:todoDelete('${todo.no}')|">
 									삭제
 								</button>
 							</td>
@@ -147,7 +278,8 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 					alert(data.res_msg);
 				})
 			}
-		
+			
 		</script>
 	</th:block>
+</body>	
 </html>

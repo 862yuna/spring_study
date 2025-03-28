@@ -26,9 +26,12 @@ public class HomeController {
 
 	private final TodoService service;
 	
-	
+// HomeController랑 TodoController 따로 만들면	이대로 홈으로 보내준 후
+// 이쪽에서는 리스트 형태로 목록을 보여주기만 하면 된다.	
 //	@GetMapping({"","/"})
-//	public String home() {
+//	public String home(Model model) {
+// 		List<Todo> resultList = service.selectTodoAll();	
+//		model.addAttritbute("resultList",resultList);
 //		return "home";
 //	}
 	
@@ -39,9 +42,9 @@ public class HomeController {
 		resultMap.put("res_code", "500");
 		resultMap.put("res_msg", "할일 등록중 오류가 발생했습니다.");
 		
-		int result = service.createTodo(dto);
+		Todo result = service.createTodo(dto);
 		
-		if(result > 0 ) {
+		if(result != null ) {
 			resultMap.put("res_code", "200");
 			resultMap.put("res_msg", "할일이 등록되었습니다.");
 		}
@@ -62,6 +65,12 @@ public class HomeController {
 		
 		Page<Todo> resultList = service.selectTodoAll(searchDto,pageDto);
 		
+//		if(resultList.isEmpty()) {
+//			resultList = null;
+//		}
+		
+		// Paging 정보를 제외한 list 정보만 넘기고 싶을 경우 쓴다?
+		// model.addAttribute("todoList",resultList.getContent());
 		model.addAttribute("todoList",resultList);
 		
 		pageDto.setTotalPage(resultList.getTotalPages());
