@@ -138,7 +138,7 @@ h1 {
 					alert(vali_text);
 				}else{
 					const filePayload = new FormData(fileForm);
-					fetch("/attach/create",{
+					fetch("/s3/upload",{
 						method:'post',
 						body:filePayload
 					})
