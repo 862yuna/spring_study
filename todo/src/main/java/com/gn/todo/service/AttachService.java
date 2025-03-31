@@ -1,6 +1,7 @@
 package com.gn.todo.service;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -73,17 +74,30 @@ public class AttachService {
 	}
 	
 	// 2. 파일 메타 데이터 insert
-	public int createAttach(AttachDto dto) {
-		int result = 0;
-		try {
-			Attach entity = dto.toEntity();
-			Attach saved = repository.save(entity);
-			result = 1;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return result;
+//	public int createAttach(AttachDto dto) {
+//		int result = 0;
+//		try {
+//			Attach entity = dto.toEntity();
+//			Attach saved = repository.save(entity);
+//			result = 1;
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return result;
+//	}
+	
+	public Attach createAttach(AttachDto dto) {
+		Attach param = dto.toEntity();
+		return repository.save(param);
+	}
+
+	public List<Attach> selectAttachList() {
+		return repository.findAll();
+	}
+
+	public Attach selectAttachOne(Long id) {
+		return repository.findById(id).orElse(null);
 	}
 
 }

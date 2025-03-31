@@ -1,6 +1,7 @@
 package com.gn.todo.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gn.todo.dto.PageDto;
 import com.gn.todo.dto.SearchDto;
 import com.gn.todo.dto.TodoDto;
+import com.gn.todo.entity.Attach;
 import com.gn.todo.entity.Todo;
+import com.gn.todo.service.AttachService;
 import com.gn.todo.service.TodoService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class HomeController {
 
 	private final TodoService service;
+	
+	private final AttachService attachService;
 	
 // HomeController랑 TodoController 따로 만들면	이대로 홈으로 보내준 후
 // 이쪽에서는 리스트 형태로 목록을 보여주기만 하면 된다.	
@@ -64,6 +69,9 @@ public class HomeController {
 		}
 		
 		Page<Todo> resultList = service.selectTodoAll(searchDto,pageDto);
+		
+		List<Attach> attachList = attachService.selectAttachList();
+		model.addAttribute("attachList",attachList);
 		
 //		if(resultList.isEmpty()) {
 //			resultList = null;
