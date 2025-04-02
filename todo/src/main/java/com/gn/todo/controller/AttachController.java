@@ -44,6 +44,7 @@ public class AttachController {
 		
 		System.out.println("CI/ CD test02");
 		System.out.println("test2");
+		System.out.println("yml파일 수정 후 test");
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "500");
