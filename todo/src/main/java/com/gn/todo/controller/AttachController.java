@@ -43,6 +43,7 @@ public class AttachController {
 	public Map<String,String> createAttachApi(@RequestParam("files") List<MultipartFile> files){
 		
 		System.out.println("CI/ CD test02");
+		System.out.println("test2");
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "500");
