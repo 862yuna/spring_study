@@ -42,7 +42,7 @@ public class AttachController {
 	@ResponseBody
 	public Map<String,String> createAttachApi(@RequestParam("files") List<MultipartFile> files){
 		
-		System.out.println("jenkins 실행 test");
+		System.out.println("jenkins 실행 test2");
 		
 		Map<String,String> resultMap = new HashMap<String,String>();
 		resultMap.put("res_code", "500");
